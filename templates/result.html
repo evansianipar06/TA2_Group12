@@ -1,0 +1,152 @@
+{% extends 'index.html' %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<div class="container-fluid p-2 bg-primary text-white text-center">
+    <h1>RESULTS</h1>
+    <p>Adaptive Response Rate Single Exponential Smoothing</p>
+</div>
+
+
+<div class="container-fluid mt-3">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="cardResult">
+                        <div class="text1">
+                            <p>Persentase Kesalahan Peramalan (MAPE) :</p>
+                            <h2>{{mape}} %</h2>
+                        </div>
+
+                        <div class="text2">
+                            <p>Prediksi Penjualan Pada 1 Bulan berikutnya :</p>
+                            <h2>{{jlh_produk}} Produk</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="chart-container" style="position: relative; height:30vh; width:48vw">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    // setup 
+    var dataAktual = JSON.parse("{{ penjualans|escapejs }}")
+    const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
+    const down = (ctx, value) => ctx.p0.parsed.y < 12 ? value : undefined;
+    const data = {
+      labels: ["Periode 1", "Periode 2", "Periode 3", "Periode 4", "Periode 5", "Periode 6", "Periode 7"],
+      datasets: [{
+        label: 'Aktual',
+        data: dataAktual,
+        borderColor: 'rgb(75, 192, 192)',
+        segment: {
+            borderColor: ctx => skipped(ctx, 'rgb(192,75,75)') || down(ctx, 'rgb(75, 192, 192)'),
+        },
+        tension: 0.4,
+        lineTension: 0.3,
+        backgroundColor: "rgb(205, 92, 92)",
+        borderColor: ["rgb(205, 92, 92)"],
+        pointRadius: 3,
+        pointBackgroundColor: "rgba(78, 115, 223, 1)",
+        pointBorderColor: ["rgb(205, 92, 92)","rgb(205, 92, 92)","rgb(205, 92, 92)", "rgb(205, 92, 92)", "rgb(205, 92, 92)", "rgb(205, 92, 92)", "rgb(75, 192, 192)"],
+        pointHoverRadius: 3,
+        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+        pointHitRadius: 10,
+        pointBorderWidth: 8
+      },
+      {
+        label: "Forecasting",
+        fill: false,
+        backgroundColor: 'rgb(40, 178, 170)',
+        borderColor: 'rgb(75, 192, 192)',
+        tension: 0.4,
+        lineTension: 0.3,
+        pointHitRadius: 10,
+        pointBorderWidth: 8,
+        pointRadius: 3,
+      }],
+    };
+
+    // const genericOptions = {
+    //     fill: false,
+    //     interaction: {
+    //     intersect: false
+    //     },
+    //     radius: 0,
+    // };
+
+    // config 
+    const config = {
+      type: 'line',
+      data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    };
+
+    // render init block
+    const myChart = new Chart(
+      document.getElementById('chart'),
+      config
+    );
+</script>
+
+    <!-- <script>
+        var dataAktual = JSON.parse("{{ penjualans|escapejs }}")
+        var dataForecast = JSON.parse("{{ peramalan|escapejs }}")
+        let ctx = document.getElementById("chart").getContext("2d");
+        let chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: ["Periode 1", "Periode 2", "Periode 3", "Periode 4", "Periode 5", "Periode 6", "Periode 7"],
+                datasets: [{
+                        label: "Aktual",
+                        fill: false,
+                        backgroundColor: 'rgb(205, 92, 92)',
+                        borderColor: 'rgb(240, 128, 128)',
+                        tension: 0.4,
+                        lineTension: 0.3,
+                        pointHitRadius: 10,
+                        pointBorderWidth: 8,
+                        pointRadius: 3,
+                        data: dataAktual
+                    },
+                    {
+                        label: "Forecasting",
+                        fill: false,
+                        backgroundColor: 'rgb(40, 178, 170)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.4,
+                        lineTension: 0.3,
+                        pointHitRadius: 10,
+                        pointBorderWidth: 8,
+                        pointRadius: 3,
+                        data: dataForecast
+                    }
+                ]
+            },
+            options: {
+                title: {
+                    text: "GRAFIK PENJUALAN PRODUK",
+                    display: true
+                }
+            }
+        });
+    </script> -->
+
+{% endblock %}

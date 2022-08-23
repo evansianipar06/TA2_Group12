@@ -1,0 +1,29 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+<div class="container-fluid p-2 bg-primary text-white text-center">
+    <h1>FORECASTING</h1>
+    <p>Adaptive Response Rate Single Exponential Smoothing</p>
+</div>
+
+<div class="forecast">
+    <div class="form">
+        <form action="arrses" method="POST" class="forecast-form">
+            {% csrf_token %}
+            <div class="txt">
+                <h3 style="text-align: center">Data Penjualan</h3>
+                <input type="number" name="num1" placeholder="Periode 1" required>
+                <input type="number" name="num2" placeholder="Periode 2" required>
+                <input type="number" name="num3" placeholder="Periode 3" required>
+                <input type="number" name="num4" placeholder="Periode 4" required>
+                <input type="number" name="num5" placeholder="Periode 5" required>
+                <input type="number" name="num6" placeholder="Periode 6" required>
+                <!-- <input type="number" name="aktualFeb" placeholder="Data Aktual Periode 7" required> -->
+            </div>     
+            <button type="submit" value="Predict">Predict</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
